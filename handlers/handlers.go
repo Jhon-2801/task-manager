@@ -12,7 +12,7 @@ func Manejadores() {
 	router := mux.NewRouter()
 
 	router.HandleFunc("/register", middlew.ChequeoDb(routers.RegisterUser)).Methods("POST")
-	router.HandleFunc("/login", routers.LoginUser).Methods("GET")
+	router.HandleFunc("/login", middlew.ChequeoDb(routers.LoginUser)).Methods("POST")
 
 	http.ListenAndServe(":3000", router)
 }

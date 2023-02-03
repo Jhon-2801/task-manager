@@ -10,6 +10,8 @@ func InsertRegister(user models.User) {
 
 	defer db.Close()
 
+	user.Password = EncriptarPassword(user.Password)
+
 	insertarUser, err := db.DB().Prepare("INSERT INTO users (name_user, mail, password) VALUES(?, ?, ?)")
 	if err != nil {
 		log.Fatal("Error al insertar usuario", err)

@@ -4,9 +4,10 @@ import (
 	"log"
 )
 
-func CheckExistUser(mail string) bool {
+func CheckExistUser(mail string) (bool, string) {
 
 	var existMail string
+	var password string
 
 	db, err := GetConnetionBd()
 
@@ -15,7 +16,7 @@ func CheckExistUser(mail string) bool {
 	}
 	defer db.Close()
 
-	mails, err := db.DB().Query("SELECT mail FROM users")
+	mails, err := db.DB().Query("SELECT mail, password FROM users")
 
 	if err != nil {
 		log.Fatal("error al consular la base de datos", err)
@@ -24,15 +25,16 @@ func CheckExistUser(mail string) bool {
 	defer mails.Close()
 
 	for mails.Next() {
-		err = mails.Scan(&existMail)
+		err = mails.Scan(&existMail, &password)
 
 		if err != nil {
 			log.Fatal("error al consular la base de datos", err)
-			return true
+			return true, ""
 		}
 		if mail == existMail {
-			return true
+
+			return true, password
 		}
 	}
-	return false
+	return false, ""
 }

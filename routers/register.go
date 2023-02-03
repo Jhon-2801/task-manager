@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"v3/bd"
 	"v3/models"
+	"v3/utilities"
 )
 
 func RegisterUser(w http.ResponseWriter, r *http.Request) {
@@ -21,9 +22,8 @@ func RegisterUser(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "El nombre del usuario es requerido", 400)
 		return
 	}
-	if len(user.Mail) == 0 {
-		http.Error(w, "El mail del usuario es requerido", 400)
-
+	if !utilities.IsValidMail(user.Mail) {
+		http.Error(w, "El mail no es valido", 400)
 		return
 	}
 	if len(user.Password) < 8 {
@@ -31,7 +31,7 @@ func RegisterUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	itFoundUser := bd.CheckExistUser(user.Mail)
+	itFoundUser, _ := bd.CheckExistUser(user.Mail)
 
 	if itFoundUser {
 		http.Error(w, "El usuario ya esta registrado", 400)
