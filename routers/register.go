@@ -27,13 +27,13 @@ func RegisterUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if len(user.Password) < 8 {
-		http.Error(w, "El password del usuario es requerido", 400)
+		http.Error(w, "El password tiene que tener mas de 8 caracteres", 400)
 		return
 	}
 
 	itFoundUser, _ := bd.CheckExistUser(user.Mail)
 
-	if itFoundUser {
+	if itFoundUser == true {
 		http.Error(w, "El usuario ya esta registrado", 400)
 		return
 	}

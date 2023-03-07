@@ -6,7 +6,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func IntentoLogin(user models.User) bool {
+func ValidatePassword(user models.User) bool {
 	itFoundUser, password := CheckExistUser(user.Mail)
 
 	if !itFoundUser {

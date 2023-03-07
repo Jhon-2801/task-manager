@@ -6,7 +6,7 @@ import (
 )
 
 func InsertRegister(user models.User) {
-	db, _ := GetConnetionBd()
+	db, _ := GetConnectionBd()
 
 	defer db.Close()
 

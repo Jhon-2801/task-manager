@@ -15,4 +15,5 @@ func Manejadores() {
 	router.HandleFunc("/login", middlew.ChequeoDb(routers.LoginUser)).Methods("POST")
 
 	http.ListenAndServe(":3000", router)
+
 }

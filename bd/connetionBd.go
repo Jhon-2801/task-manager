@@ -2,30 +2,27 @@ package bd
 
 import (
 	"fmt"
-	"log"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jinzhu/gorm"
 )
 
-func GetConnetionBd() (*gorm.DB, error) {
+func GetConnectionBd() (*gorm.DB, error) {
 
 	db, err := gorm.Open("mysql", "root:jhon0128@/mydb")
 
 	if err != nil {
 		return nil, err
 	} else {
-		log.Printf("ConectadoDB")
+		return db, nil
 	}
-
-	return db, nil
 }
 
-func ChequeoConnectioDb() int {
-	db, err := GetConnetionBd()
+func ChequeoConnectionDb() int {
+	db, err := GetConnectionBd()
 
 	if err != nil {
-		fmt.Printf("Error obteniendo base de datos: %v", err)
+		fmt.Printf("Error obteniendo base de dato: %v", err)
 	}
 
 	defer db.Close()

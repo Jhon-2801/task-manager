@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-	if bd.ChequeoConnectioDb() == 0 {
+	if bd.ChequeoConnectionDb() == 0 {
 		log.Fatal("Sin conexion a la DB")
 	}
 	handlers.Manejadores()
