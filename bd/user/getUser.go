@@ -5,6 +5,7 @@ import (
 	"v3/models"
 )
 
+// Trae a solo un usuario
 func GetUser(mail string) models.User {
 
 	users, err := GetAllUsers()

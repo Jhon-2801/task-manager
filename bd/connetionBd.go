@@ -7,6 +7,7 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
+// Hace la conexion a la BD
 func GetConnectionBd() (*gorm.DB, error) {
 
 	db, err := gorm.Open("mysql", "root:jhon0128@/mydb")

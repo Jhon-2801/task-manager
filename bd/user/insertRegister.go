@@ -2,11 +2,13 @@ package bd
 
 import (
 	"log"
+	"v3/bd"
 	"v3/models"
 )
 
+// Inserta Usuario a la BD
 func InsertRegister(user models.User) {
-	db, _ := GetConnectionBd()
+	db, _ := bd.GetConnectionBd()
 
 	defer db.Close()
 

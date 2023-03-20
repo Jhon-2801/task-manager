@@ -6,6 +6,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+// Encripta la contraseña
 func EncriptarPassword(pass string) string {
 	cost := 6
 

@@ -1,5 +1,6 @@
 package bd
 
+// Chequea si el usuario ya existe
 func CheckExistUser(mail string) (bool, string) {
 
 	user := GetUser(mail)

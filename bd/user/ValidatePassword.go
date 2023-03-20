@@ -6,6 +6,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+// Hace la validacion de la contraseña del usuario
 func ValidatePassword(user models.User) bool {
 	itFoundUser, password := CheckExistUser(user.Mail)
 
