@@ -6,6 +6,6 @@ type Task struct {
 	Progress    int    `json:"progress"`
 	Description string `json:"description"`
 	Date        string `json:"date"`
-	Id_user     int    `json:"id_user"`
+	UserID      int    `json:"id_user"`
 	Status      string `json:"status"`
 }

@@ -27,5 +27,5 @@ func InsertTaskBd(task models.Task) {
 	}
 	defer insertarUser.Close()
 	// Ejecutar sentencia, un valor por cada '?'
-	insertarUser.Exec(task.Name, task.Description, task.Id_user, date, task.Status, task.Progress)
+	insertarUser.Exec(task.Name, task.Description, task.UserID, date, task.Status, task.Progress)
 }

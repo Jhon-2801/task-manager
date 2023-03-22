@@ -28,7 +28,7 @@ func UpDateTaskBd(id string, task models.Task) {
 
 	defer sentencia.Close()
 	// Pasar argumentos en el mismo orden que la consulta
-	_, err = sentencia.Exec(task.Name, task.Description, task.Id_user, task.Date, task.Status, task.Progress, idTask)
+	_, err = sentencia.Exec(task.Name, task.Description, task.UserID, task.Date, task.Status, task.Progress, idTask)
 	if err != nil {
 		log.Fatal("Error al actualizar datos" + err.Error())
 		return
