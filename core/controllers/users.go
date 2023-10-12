@@ -45,7 +45,6 @@ func makeRegisterUser(s service.Service) Controller {
 			c.IndentedJSON(http.StatusBadRequest, gin.H{"message": "password is required"})
 			return
 		}
-
 		c.IndentedJSON(http.StatusAccepted, req)
 	}
 }

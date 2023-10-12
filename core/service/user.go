@@ -3,7 +3,7 @@ package service
 import (
 	"regexp"
 
-	Repository "github.com/Jhon-2801/task-manager/core/respositories"
+	repo "github.com/Jhon-2801/task-manager/core/repo"
 )
 
 type (
@@ -12,11 +12,11 @@ type (
 		IsValidMail(mail string) bool
 	}
 	service struct {
-		repo Repository.Repository
+		repo repo.Repository
 	}
 )
 
-func NewService(repo Repository.Repository) Service {
+func NewService(repo repo.Repository) Service {
 	return &service{
 		repo: repo,
 	}
