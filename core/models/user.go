@@ -6,10 +6,11 @@ import (
 )
 
 type User struct {
-	Id       string
-	Name     string `json:"name"`
-	Mail     string `json:"mail"`
-	Password string `json:"password"`
+	Id         string
+	First_Name string `json:"first_name"`
+	Last_Name  string `json:"last_name"`
+	Mail       string `json:"mail"`
+	Password   string `json:"password"`
 }
 
 func (u *User) BeforeCreate(tx *gorm.DB) (err error) {

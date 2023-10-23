@@ -20,8 +20,12 @@ var (
 
 type (
 	Service interface {
+<<<<<<< HEAD
 		Register(name, mail, password string) error
 		GetAllUser() (*gorm.DB, error)
+=======
+		Register(first_name, last_Name, mail, password string) error
+>>>>>>> ca37cb113fa207f03aff20b797ba28c4b7033e59
 		IsValidMail(mail string) bool
 		GetUserByMail(mail string) (models.User, error)
 		EncryptPassword(password string) (string, error)
@@ -39,7 +43,7 @@ func NewService(repo Repository) Service {
 	}
 }
 
-func (s service) Register(name, mail, password string) error {
+func (s service) Register(first_name, last_Name, mail, password string) error {
 
 	password, err := s.EncryptPassword(password)
 
@@ -47,9 +51,10 @@ func (s service) Register(name, mail, password string) error {
 		return err
 	}
 	user := models.User{
-		Name:     name,
-		Mail:     mail,
-		Password: password,
+		First_Name: first_name,
+		Last_Name:  last_Name,
+		Mail:       mail,
+		Password:   password,
 	}
 
 	err = s.repo.Register(&user)
