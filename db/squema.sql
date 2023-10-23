@@ -3,17 +3,19 @@ use task_manager;
 
 create table users(
     id varchar(255) not null,
-    name varchar(45) not null,
+    first_name varchar(45) not null,
+    last_name varchar(45) not null,
     mail varchar(255) not null,
     password varchar(255) not null,
     primary key(id)
 )
 
 create table tasks(
-    id varchar(255) not null,
+    id varchar(255) not null,  
     name varchar(45) not null,
     description varchar(255) not null,
     dates date not null,
+    status tinyint(1),
     user_id varchar(255) not null,
     primary key(id),
     foreign key (user_id) references users(id)
