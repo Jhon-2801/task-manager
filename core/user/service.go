@@ -10,6 +10,7 @@ import (
 	"github.com/Jhon-2801/task-manager/core/models"
 	"github.com/dgrijalva/jwt-go"
 	"golang.org/x/crypto/bcrypt"
+	"gorm.io/gorm"
 )
 
 var (
@@ -20,6 +21,7 @@ var (
 type (
 	Service interface {
 		Register(name, mail, password string) error
+		GetAllUser() (*gorm.DB, error)
 		IsValidMail(mail string) bool
 		GetUserByMail(mail string) (models.User, error)
 		EncryptPassword(password string) (string, error)
@@ -127,4 +129,12 @@ func (s service) GenerateJWT(mail string) string {
 		log.Fatal("Could not sign token")
 	}
 	return result
+}
+
+func (s service) GetAllUser() (*gorm.DB, error) {
+	users, err := s.repo.GetAllUser()
+	if err != nil {
+		return nil, err
+	}
+	return users, err
 }

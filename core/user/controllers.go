@@ -11,6 +11,7 @@ type (
 	EndPoints  struct {
 		RegisterUser Controller
 		LoginUser    Controller
+		GetAllUser   Controller
 	}
 	LoginReq struct {
 		Mail     string `json:"mail"`
@@ -27,6 +28,7 @@ func MakeEnponints(s Service) EndPoints {
 	return EndPoints{
 		RegisterUser: makeRegisterUser(s),
 		LoginUser:    makeLoginUser(s),
+		GetAllUser:   makeGetAllUser(s),
 	}
 }
 
@@ -93,5 +95,16 @@ func makeLoginUser(s Service) Controller {
 		token := s.GenerateJWT(req.Mail)
 
 		c.IndentedJSON(http.StatusAccepted, gin.H{"user": user, "token": token})
+	}
+}
+
+func makeGetAllUser(s Service) Controller {
+	return func(c *gin.Context) {
+		users, err := s.GetAllUser()
+		if err != nil {
+			c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": err})
+		}
+
+		c.IndentedJSON(http.StatusAccepted, gin.H{"users": users})
 	}
 }

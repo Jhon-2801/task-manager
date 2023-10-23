@@ -23,6 +23,7 @@ func main() {
 
 	router.POST("/login", gin.HandlerFunc(userEnd.LoginUser))
 	router.POST("/register", gin.HandlerFunc(userEnd.RegisterUser))
+	router.GET("/users", gin.HandlerFunc(userEnd.GetAllUser))
 
 	router.Run(":8081")
 }
