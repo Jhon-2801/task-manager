@@ -9,9 +9,11 @@ type Task struct {
 	Id          string
 	Name        string `json:"name"`
 	Description string `json:"description"`
-	Date        string `json:"date"`
+	Due_date    string `json:"due_date"`
 	UserID      int    `json:"id_user"`
 	Status      string `json:"status"`
+	Create_at   string `json:"create_at"`
+	Update_at   string `json:"update_at"`
 }
 
 func (u *Task) BeforeCreate(tx *gorm.DB) (err error) {
