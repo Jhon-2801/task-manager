@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 
+	"github.com/Jhon-2801/task-manager/core/middleware"
 	"github.com/Jhon-2801/task-manager/core/user"
 	"github.com/Jhon-2801/task-manager/db"
 	"github.com/gin-gonic/gin"
@@ -23,7 +24,7 @@ func main() {
 
 	router.POST("/login", gin.HandlerFunc(userEnd.LoginUser))
 	router.POST("/register", gin.HandlerFunc(userEnd.RegisterUser))
-	router.GET("/users", gin.HandlerFunc(userEnd.GetAllUser))
+	router.GET("/users", middleware.ValidToken, gin.HandlerFunc(userEnd.GetAllUser))
 
 	router.Run(":8081")
 }
