@@ -11,6 +11,7 @@ type (
 	Controller func(c *gin.Context)
 	EndPoints  struct {
 		CreateTask Controller
+		GetAllTask Controller
 	}
 	CreateReq struct {
 		Name        string `json:"name"`
@@ -23,6 +24,7 @@ type (
 func MakeEnponints(s Service) EndPoints {
 	return EndPoints{
 		CreateTask: makeCreateTask(s),
+		GetAllTask: makeGetAllTask(s),
 	}
 }
 
@@ -68,5 +70,22 @@ func makeCreateTask(s Service) Controller {
 			return
 		}
 		c.IndentedJSON(http.StatusCreated, gin.H{"status": 201, "data": req})
+	}
+}
+
+func makeGetAllTask(s Service) Controller {
+	return func(c *gin.Context) {
+		userId := c.Param("id")
+		if userId == "" {
+			c.IndentedJSON(http.StatusBadRequest, gin.H{"status": 400, "message": "user_id is required"})
+			return
+		}
+		tasks, err := s.GetAllTask(userId)
+		if err != nil {
+			c.IndentedJSON(http.StatusInternalServerError, gin.H{"status": 500, "err": err})
+			return
+		}
+		c.IndentedJSON(http.StatusOK, gin.H{"status": 200, "data": tasks})
+
 	}
 }

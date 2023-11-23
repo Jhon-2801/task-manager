@@ -32,6 +32,7 @@ func main() {
 	router.GET("/users", middleware.ValidToken, gin.HandlerFunc(userEnd.GetAllUser))
 
 	router.POST("/create", middleware.ValidToken, gin.HandlerFunc(taskEnd.CreateTask))
+	router.GET("/tasks/:id", middleware.ValidToken, gin.HandlerFunc(taskEnd.GetAllTask))
 
 	router.Run(":8081")
 }

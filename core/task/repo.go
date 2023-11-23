@@ -1,6 +1,8 @@
 package task
 
 import (
+	"fmt"
+
 	"github.com/Jhon-2801/task-manager/core/models"
 	"gorm.io/gorm"
 )
@@ -9,6 +11,7 @@ type (
 	Repository interface {
 		Create(task *models.Task) error
 		GetUserById(id string) error
+		GetAllTask(id string) ([]models.Task, error)
 	}
 	repo struct {
 		db *gorm.DB
@@ -35,4 +38,15 @@ func (repo *repo) GetUserById(id string) error {
 		return err
 	}
 	return nil
+}
+
+func (repo *repo) GetAllTask(id string) ([]models.Task, error) {
+	var tasks []models.Task
+	err := repo.db.Where("user_id = ?", id).Find(&tasks)
+
+	fmt.Println(tasks)
+	if err.Error != nil {
+		return nil, err.Error
+	}
+	return tasks, nil
 }
