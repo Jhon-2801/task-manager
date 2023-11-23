@@ -1,8 +1,6 @@
 package user
 
 import (
-	"fmt"
-
 	"github.com/Jhon-2801/task-manager/core/models"
 	"gorm.io/gorm"
 )
@@ -41,12 +39,11 @@ func (repo *repo) GetUserByMail(mail string) (models.User, error) {
 }
 
 func (repo *repo) GetAllUser() ([]models.User, error) {
-	var users []models.User
+	var user []models.User
 
-	tx := repo.db.Select("id", "first_name", "last_name", "mail").Find(&users)
+	tx := repo.db.Select("id", "first_name", "last_name", "mail").Find(&user)
 	if tx.Error != nil {
-		fmt.Println("Aqui esta el error", tx.Error)
 		return nil, tx.Error
 	}
-	return users, nil
+	return user, nil
 }

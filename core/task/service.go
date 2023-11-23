@@ -10,6 +10,7 @@ type (
 	Service interface {
 		Create(name, descrip, userID string, dueDate time.Time) error
 		GetUserById(id string) error
+		GetAllTask(id string) ([]models.Task, error)
 	}
 	service struct {
 		repo Repository
@@ -32,7 +33,7 @@ func (s service) Create(name, descrip, userID string, dueDate time.Time) error {
 		UserID:      userID,
 		Status:      false,
 		Create_at:   time.Now(),
-		Update_at:   time.Time{},
+		Update_at:   time.Now(),
 	}
 	err := s.repo.Create(task)
 	if err != nil {
@@ -47,4 +48,12 @@ func (s service) GetUserById(id string) error {
 		return err
 	}
 	return nil
+}
+
+func (s service) GetAllTask(id string) ([]models.Task, error) {
+	tasks, err := s.repo.GetAllTask(id)
+	if err != nil {
+		return nil, err
+	}
+	return tasks, nil
 }
