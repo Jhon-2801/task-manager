@@ -2,6 +2,7 @@ package task
 
 import (
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -14,7 +15,8 @@ type (
 	CreateReq struct {
 		Name        string `json:"name"`
 		Description string `json:"description"`
-		Date        string `json:"date"`
+		Due_date    string `json:"due_date"`
+		UserID      string `json:"user_id"`
 	}
 )
 
@@ -30,19 +32,41 @@ func makeCreateTask(s Service) Controller {
 		c.BindJSON(&req)
 
 		if req.Name == "" {
-			c.IndentedJSON(http.StatusBadRequest, gin.H{"message": "name is required"})
+			c.IndentedJSON(http.StatusBadRequest, gin.H{"status": 400, "message": "name is required"})
 			return
 		}
-		if req.Date == "" {
-			c.IndentedJSON(http.StatusBadRequest, gin.H{"message": "date is required"})
+		if req.Due_date == "" {
+			c.IndentedJSON(http.StatusBadRequest, gin.H{"status": 400, "message": "due_date is required"})
+			return
+		}
+		if req.UserID == "" {
+			c.IndentedJSON(http.StatusBadRequest, gin.H{"status": 400, "message": "user_id is required"})
 			return
 		}
 
-		err := s.Create(req.Name, req.Description, req.Date)
+		err := s.GetUserById(req.UserID)
 		if err != nil {
-			c.IndentedJSON(http.StatusInternalServerError, err)
+			c.IndentedJSON(http.StatusBadRequest, gin.H{"status": 400, "message": "user not found", "err": err})
 			return
 		}
-		c.IndentedJSON(http.StatusCreated, req)
+
+		newDate, err := time.Parse("2006-01-02", req.Due_date)
+
+		if err != nil {
+			c.IndentedJSON(http.StatusInternalServerError, gin.H{"status": 500, "err": err})
+			return
+		}
+
+		if newDate.Before(time.Now()) {
+			c.IndentedJSON(http.StatusBadRequest, gin.H{"status": 400, "message": "the date provided is before the current date"})
+			return
+		}
+
+		err = s.Create(req.Name, req.Description, req.UserID, newDate)
+		if err != nil {
+			c.IndentedJSON(http.StatusInternalServerError, gin.H{"status": 500, "err": err})
+			return
+		}
+		c.IndentedJSON(http.StatusCreated, gin.H{"status": 201, "data": req})
 	}
 }

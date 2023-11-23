@@ -2,7 +2,6 @@ package jwt
 
 import (
 	"errors"
-	"fmt"
 	"os"
 	"strings"
 
@@ -26,17 +25,13 @@ func ProcessToken(tk string) (bool, error) {
 
 	tk = strings.TrimSpace(slpitToken[1])
 
-	fmt.Println(tk)
 	tkn, err := jwt.ParseWithClaims(tk, &claims, func(t *jwt.Token) (interface{}, error) {
-		fmt.Println(1)
 		return privateKeyByte, nil
 	})
 
 	if err == nil {
-		fmt.Println(2)
 		return true, nil
 	}
-	fmt.Println(1)
 	if !tkn.Valid {
 		return false, errors.New("token Inválido")
 	}

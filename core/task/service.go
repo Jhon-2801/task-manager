@@ -1,7 +1,6 @@
 package task
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/Jhon-2801/task-manager/core/models"
@@ -9,7 +8,8 @@ import (
 
 type (
 	Service interface {
-		Create(name, descrip, date string) error
+		Create(name, descrip, userID string, dueDate time.Time) error
+		GetUserById(id string) error
 	}
 	service struct {
 		repo Repository
@@ -22,19 +22,28 @@ func NewService(repo Repository) Service {
 	}
 }
 
-func (s service) Create(name, descrip, date string) error {
-	newDate, err := time.Parse("2006-01-02", date)
+func (s service) Create(name, descrip, userID string, dueDate time.Time) error {
+
+	task := &models.Task{
+		Id:          "",
+		Name:        name,
+		Description: descrip,
+		Due_date:    dueDate,
+		UserID:      userID,
+		Status:      false,
+		Create_at:   time.Now(),
+		Update_at:   time.Time{},
+	}
+	err := s.repo.Create(task)
 	if err != nil {
 		return err
 	}
-	task := &models.Task{
-		Name:        name,
-		Description: descrip,
-		Dates:       newDate,
-	}
-	err = s.repo.Create(task)
+	return nil
+}
+
+func (s service) GetUserById(id string) error {
+	err := s.repo.GetUserById(id)
 	if err != nil {
-		fmt.Println("El error esta aqui", err)
 		return err
 	}
 	return nil

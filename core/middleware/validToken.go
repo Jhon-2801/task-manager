@@ -1,7 +1,6 @@
 package middleware
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/Jhon-2801/task-manager/core/jwt"
@@ -16,7 +15,6 @@ func ValidToken(c *gin.Context) {
 		return
 	}
 	isValidToken, err := jwt.ProcessToken(token)
-	fmt.Println(1)
 	if !isValidToken {
 		if err != nil {
 			c.IndentedJSON(http.StatusBadRequest, gin.H{"status": 400, "message": "Token invalid", "err": err})
