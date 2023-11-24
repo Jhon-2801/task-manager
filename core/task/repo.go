@@ -11,7 +11,9 @@ type (
 	Repository interface {
 		Create(task *models.Task) error
 		GetUserById(id string) error
+		GetTaskById(id string) error
 		GetAllTask(id string) ([]models.Task, error)
+		UpDateTask(task *models.Task) error
 	}
 	repo struct {
 		db *gorm.DB
@@ -39,7 +41,14 @@ func (repo *repo) GetUserById(id string) error {
 	}
 	return nil
 }
-
+func (repo *repo) GetTaskById(id string) error {
+	task := models.Task{}
+	err := repo.db.Where("id = ?", id).First(&task).Error
+	if err != nil {
+		return err
+	}
+	return nil
+}
 func (repo *repo) GetAllTask(id string) ([]models.Task, error) {
 	var tasks []models.Task
 	err := repo.db.Where("user_id = ?", id).Find(&tasks)
@@ -49,4 +58,11 @@ func (repo *repo) GetAllTask(id string) ([]models.Task, error) {
 		return nil, err.Error
 	}
 	return tasks, nil
+}
+
+func (repo *repo) UpDateTask(task *models.Task) error {
+	if err := repo.db.Save(task).Error; err != nil {
+		return err
+	}
+	return nil
 }

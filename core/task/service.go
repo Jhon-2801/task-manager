@@ -11,6 +11,8 @@ type (
 		Create(name, descrip, userID string, dueDate time.Time) error
 		GetUserById(id string) error
 		GetAllTask(id string) ([]models.Task, error)
+		UpDateTask(id, name, descrip, userID string, dueDate time.Time, status bool, create time.Time) (string, error)
+		GetTaskById(id string) error
 	}
 	service struct {
 		repo Repository
@@ -49,11 +51,38 @@ func (s service) GetUserById(id string) error {
 	}
 	return nil
 }
-
+func (s service) GetTaskById(id string) error {
+	err := s.repo.GetTaskById(id)
+	if err != nil {
+		return err
+	}
+	return nil
+}
 func (s service) GetAllTask(id string) ([]models.Task, error) {
 	tasks, err := s.repo.GetAllTask(id)
 	if err != nil {
 		return nil, err
 	}
 	return tasks, nil
+}
+
+func (s service) UpDateTask(id, name, descrip, userID string, dueDate time.Time, status bool, create time.Time) (string, error) {
+
+	task := &models.Task{
+		Id:          id,
+		Name:        name,
+		Description: descrip,
+		Due_date:    dueDate,
+		UserID:      userID,
+		Status:      false,
+		Create_at:   create,
+		Update_at:   time.Now(),
+	}
+
+	err := s.repo.UpDateTask(task)
+	if err != nil {
+		return "", err
+	}
+	update := task.Update_at.Format("2006-01-02")
+	return update, err
 }

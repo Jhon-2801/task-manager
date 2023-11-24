@@ -25,6 +25,7 @@ func main() {
 	taskSrv := task.NewService(taskRepo)
 	taskEnd := task.MakeEnponints(taskSrv)
 
+	gin.SetMode(gin.ReleaseMode)
 	router := gin.Default()
 
 	router.POST("/login", gin.HandlerFunc(userEnd.LoginUser))
@@ -33,6 +34,7 @@ func main() {
 
 	router.POST("/create", middleware.ValidToken, gin.HandlerFunc(taskEnd.CreateTask))
 	router.GET("/tasks/:id", middleware.ValidToken, gin.HandlerFunc(taskEnd.GetAllTask))
+	router.PATCH("/update/:id", middleware.ValidToken, gin.HandlerFunc(taskEnd.UpDateTask))
 
 	router.Run(":8081")
 }
