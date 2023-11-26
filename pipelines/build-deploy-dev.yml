@@ -27,7 +27,7 @@ stages:
     - task: GoTool@0
       displayName: 'Instalar Go'
       inputs:
-          version: '1.25.4'  # Versión de Go que deseas usar
+          version: '1.21.4'  # Versión de Go que deseas usar
 
     - script: |
         go mod download
