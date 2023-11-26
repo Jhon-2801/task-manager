@@ -36,5 +36,5 @@ func main() {
 	router.GET("/tasks/:id", middleware.ValidToken, gin.HandlerFunc(taskEnd.GetAllTask))
 	router.PATCH("/update/:id", middleware.ValidToken, gin.HandlerFunc(taskEnd.UpDateTask))
 
-	router.Run(":8081")
+	router.Run(":8080")
 }
