@@ -10,7 +10,8 @@ variables:
   dockerRegistryServiceConnection: 'aab8776a-b923-4e34-86f7-063056099106'
   imageRepository: 'taskmanagerback'
   containerRegistry: 'taskmanageru.azurecr.io'
-  tag: '$(Build.BuildId)'
+  buildTag: '$(Build.BuildId)'
+  latestTag: latest
 
   # Agent VM image name
   vmImageName: 'ubuntu-latest'
