@@ -1,0 +1,48 @@
+# Docker
+# Build and push an image to Azure Container Registry
+# https://docs.microsoft.com/azure/devops/pipelines/languages/docker
+
+trigger:
+- feature/*
+
+resources:
+- repo: self
+
+variables:
+  # Container registry service connection established during pipeline creation
+  dockerRegistryServiceConnection: 'aab8776a-b923-4e34-86f7-063056099106'
+  imageRepository: 'taskmanagerback'
+  containerRegistry: 'taskmanageru.azurecr.io'
+  dockerfilePath: '$(Build.SourcesDirectory)/docker/dockerfile'
+  tag: '$(Build.BuildId)'
+
+  # Agent VM image name
+  vmImageName: 'ubuntu-latest'
+
+stages:
+- stage: Build
+  displayName: Build and push stage
+  jobs:
+  - job: Build
+    displayName: Build
+    pool:
+      vmImage: $(vmImageName)
+    steps:
+    - task: GoTool@0
+       displayName: 'Instalar Go'
+        inputs:
+            version: '1.17.x'  # Versión de Go que deseas usar
+
+        - script: |
+            go mod download
+            go build -o mi_aplicacion
+        displayName: 'Construir la aplicación Go'
+    - task: Docker@2
+      displayName: Build and push an image to container registry
+      inputs:
+        command: buildAndPush
+        repository: $(imageRepository)
+        dockerfile: $(dockerfilePath)
+        containerRegistry: $(dockerRegistryServiceConnection)
+        tags: |
+          $(tag)
