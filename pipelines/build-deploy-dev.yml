@@ -31,7 +31,7 @@ stages:
 
     - script: |
         go mod download
-        go build -o app main.go
+        go build .
       displayName: 'Construir la aplicación Go'
 
     - task: Docker@2
