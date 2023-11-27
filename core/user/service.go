@@ -9,12 +9,12 @@ import (
 
 type (
 	Service interface {
-		Register(first_name, last_Name, mail, password string) error
-		IsValidMail(mail string) bool
+		Register(first_name, last_Name, email, password string) error
+		IsValidMail(email string) bool
 		GetAllUser() ([]models.User, error)
-		GetUserByMail(mail string) (models.User, error)
+		GetUserByMail(email string) (models.User, error)
 		EncryptPassword(password string) (string, error)
-		ValidPassword(mail, password string) (bool, error)
+		ValidPassword(email, password string) (bool, error)
 	}
 	service struct {
 		repo Repository
@@ -27,7 +27,7 @@ func NewService(repo Repository) Service {
 	}
 }
 
-func (s service) Register(first_name, last_Name, mail, password string) error {
+func (s service) Register(first_name, last_Name, email, password string) error {
 
 	password, err := s.EncryptPassword(password)
 
@@ -37,7 +37,7 @@ func (s service) Register(first_name, last_Name, mail, password string) error {
 	user := models.User{
 		First_Name: first_name,
 		Last_Name:  last_Name,
-		Mail:       mail,
+		Email:      email,
 		Password:   password,
 	}
 
@@ -50,9 +50,9 @@ func (s service) Register(first_name, last_Name, mail, password string) error {
 	return nil
 }
 
-func (s service) IsValidMail(mail string) bool {
+func (s service) IsValidMail(email string) bool {
 	validMail := regexp.MustCompile("^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$")
-	return validMail.MatchString(mail)
+	return validMail.MatchString(email)
 }
 
 func (s service) EncryptPassword(password string) (string, error) {
@@ -63,13 +63,13 @@ func (s service) EncryptPassword(password string) (string, error) {
 	return string(hash), nil
 }
 
-func (s service) GetUserByMail(mail string) (models.User, error) {
-	user, err := s.repo.GetUserByMail(mail)
+func (s service) GetUserByMail(email string) (models.User, error) {
+	user, err := s.repo.GetUserByMail(email)
 	return user, err
 }
 
-func (s service) ValidPassword(mail, password string) (bool, error) {
-	user, err := s.repo.GetUserByMail(mail)
+func (s service) ValidPassword(email, password string) (bool, error) {
+	user, err := s.repo.GetUserByMail(email)
 
 	if err != nil {
 		return true, err

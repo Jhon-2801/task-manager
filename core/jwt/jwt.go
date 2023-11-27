@@ -14,7 +14,7 @@ func GeneroJWT(user models.User) (string, error) {
 	privateKey := os.Getenv("PRIVATE_KEY")
 	privateKeyByte := []byte(privateKey)
 	payload := jwt.MapClaims{
-		"email":      user.Mail,
+		"email":      user.Email,
 		"first_name": user.First_Name,
 		"last_name":  user.Last_Name,
 		"id":         user.Id,

@@ -9,7 +9,7 @@ type (
 	Repository interface {
 		Register(user *models.User) error
 		GetAllUser() ([]models.User, error)
-		GetUserByMail(mail string) (models.User, error)
+		GetUserByMail(email string) (models.User, error)
 	}
 	repo struct {
 		db *gorm.DB
@@ -29,9 +29,9 @@ func (repo *repo) Register(user *models.User) error {
 	return nil
 }
 
-func (repo *repo) GetUserByMail(mail string) (models.User, error) {
+func (repo *repo) GetUserByMail(email string) (models.User, error) {
 	user := models.User{}
-	err := repo.db.Where("mail = ?", mail).First(&user).Error
+	err := repo.db.Where("email = ?", email).First(&user).Error
 	if err != nil {
 		return user, err
 	}
@@ -41,7 +41,7 @@ func (repo *repo) GetUserByMail(mail string) (models.User, error) {
 func (repo *repo) GetAllUser() ([]models.User, error) {
 	var user []models.User
 
-	tx := repo.db.Select("id", "first_name", "last_name", "mail").Find(&user)
+	tx := repo.db.Select("id", "first_name", "last_name", "email").Find(&user)
 	if tx.Error != nil {
 		return nil, tx.Error
 	}

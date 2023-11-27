@@ -9,8 +9,8 @@ type User struct {
 	Id         string
 	First_Name string `json:"first_name"`
 	Last_Name  string `json:"last_name"`
-	Mail       string `json:"mail"`
-	Password   string `json:"password"`
+	Email      string `json:"email"`
+	Password   string `json:"-"`
 }
 
 func (u *User) BeforeCreate(tx *gorm.DB) (err error) {
