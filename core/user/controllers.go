@@ -1,7 +1,6 @@
 package user
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/Jhon-2801/task-manager/core/jwt"
@@ -16,8 +15,8 @@ type (
 		GetAllUser   Controller
 	}
 	LoginReq struct {
-		Email    string `json:"email"`
-		Password string `json:"password"`
+		Email    string `form:"email"`
+		Password string `form:"password"`
 	}
 	UserRes struct {
 		Id        string `json:"id"`
@@ -26,10 +25,10 @@ type (
 		Email     string `json:"email"`
 	}
 	RegisterReq struct {
-		FirstName string `json:"first_name"`
-		LastName  string `json:"last_name"`
-		Email     string `json:"email"`
-		Password  string `json:"password"`
+		FirstName string `form:"first_name"`
+		LastName  string `form:"last_name"`
+		Email     string `form:"email"`
+		Password  string `form:"password"`
 	}
 )
 
@@ -44,17 +43,20 @@ func MakeEnponints(s Service) EndPoints {
 func makeRegisterUser(s Service) Controller {
 	return func(c *gin.Context) {
 		var req RegisterReq
-		c.BindJSON(&req)
+		err := c.ShouldBind(&req)
+		if err != nil {
+			c.IndentedJSON(http.StatusBadRequest, gin.H{"status": 500, "message": err})
+			return
+		}
 		if req.Email == "" {
 			c.IndentedJSON(http.StatusBadRequest, gin.H{"status": 400, "message": "email is required"})
 			return
 		}
-		fmt.Println(req.Email)
 		if !Service.IsValidMail(s, req.Email) {
 			c.IndentedJSON(http.StatusBadRequest, gin.H{"status": 400, "message": "email is not valid "})
 			return
 		}
-		_, err := s.GetUserByMail(req.Email)
+		_, err = s.GetUserByMail(req.Email)
 		if err == nil {
 			c.IndentedJSON(http.StatusBadRequest, gin.H{"status": 400, "message": "the email already exists"})
 			return
@@ -95,7 +97,11 @@ func makeRegisterUser(s Service) Controller {
 func makeLoginUser(s Service) Controller {
 	return func(c *gin.Context) {
 		var req LoginReq
-		c.BindJSON(&req)
+		err := c.ShouldBind(&req)
+		if err != nil {
+			c.IndentedJSON(http.StatusBadRequest, gin.H{"status": 500, "message": err})
+			return
+		}
 		if req.Email == "" {
 			c.IndentedJSON(http.StatusBadRequest, gin.H{"status": 400, "message": "email is required"})
 			return
@@ -110,7 +116,7 @@ func makeLoginUser(s Service) Controller {
 			return
 		}
 		if len(req.Password) < 8 {
-			c.IndentedJSON(http.StatusBadRequest, gin.H{"status": 400, "message": "the password must be greater than 7 	 characters"})
+			c.IndentedJSON(http.StatusBadRequest, gin.H{"status": 400, "message": "the password must be greater than 7 characters"})
 			return
 		}
 		valid, err := s.ValidPassword(req.Email, req.Password)

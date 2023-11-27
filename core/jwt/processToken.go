@@ -1,18 +1,15 @@
 package jwt
 
 import (
-	"errors"
 	"os"
 	"strings"
 
 	"github.com/Jhon-2801/task-manager/core/models"
-	"github.com/joho/godotenv"
 
 	"github.com/dgrijalva/jwt-go"
 )
 
 func ProcessToken(tk string) (bool, error) {
-	_ = godotenv.Load()
 	privateKey := os.Getenv("PRIVATE_KEY")
 
 	privateKeyByte := []byte(privateKey)
@@ -20,7 +17,7 @@ func ProcessToken(tk string) (bool, error) {
 
 	slpitToken := strings.Split(tk, "Bearer")
 	if len(slpitToken) != 2 {
-		return false, errors.New("Formato de token invalido")
+		return false, nil
 	}
 
 	tk = strings.TrimSpace(slpitToken[1])
@@ -33,7 +30,7 @@ func ProcessToken(tk string) (bool, error) {
 		return true, nil
 	}
 	if !tkn.Valid {
-		return false, errors.New("token Inválido")
+		return false, nil
 	}
 	return false, err
 }

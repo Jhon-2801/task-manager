@@ -1,6 +1,7 @@
 package task
 
 import (
+	"fmt"
 	"net/http"
 	"time"
 
@@ -10,39 +11,41 @@ import (
 type (
 	Controller func(c *gin.Context)
 	EndPoints  struct {
-		CreateTask Controller
-		GetAllTask Controller
-		UpDateTask Controller
+		CreateTask     Controller
+		GetAllTaskById Controller
+		GetAllTask     Controller
+		UpDateTask     Controller
 	}
 	CreateReq struct {
-		Name        string `json:"name"`
-		Description string `json:"description"`
-		DueDate     string `json:"due_date"`
-		UserID      string `json:"user_id"`
+		Name        string `form:"name"`
+		Description string `form:"description"`
+		DueDate     string `form:"due_date"`
+		UserID      string `form:"user_id"`
 	}
 	UpDateReq struct {
-		Name        string `json:"name"`
-		Description string `json:"description"`
-		DueDate     string `json:"due_date"`
-		UserID      string `json:"id_user"`
-		Status      bool   `json:"status"`
-		Create      string `json:"create_at"`
+		Name        string `form:"name"`
+		Description string `form:"description"`
+		DueDate     string `form:"due_date"`
+		UserID      string `form:"id_user"`
+		Status      bool   `form:"status"`
+		Create      string `form:"create_at"`
 		UpDate      string
 	}
 )
 
 func MakeEnponints(s Service) EndPoints {
 	return EndPoints{
-		CreateTask: makeCreateTask(s),
-		GetAllTask: makeGetAllTask(s),
-		UpDateTask: makeUpdateTask(s),
+		CreateTask:     makeCreateTask(s),
+		GetAllTaskById: makeGetAllTaskById(s),
+		UpDateTask:     makeUpdateTask(s),
+		GetAllTask:     makeGetAllTask(s),
 	}
 }
 
 func makeCreateTask(s Service) Controller {
 	return func(c *gin.Context) {
 		var req CreateReq
-		c.BindJSON(&req)
+		c.ShouldBind(&req)
 
 		if req.Name == "" {
 			c.IndentedJSON(http.StatusBadRequest, gin.H{"status": 400, "message": "name is required"})
@@ -62,15 +65,14 @@ func makeCreateTask(s Service) Controller {
 			c.IndentedJSON(http.StatusBadRequest, gin.H{"status": 400, "message": "user not found", "err": err})
 			return
 		}
-
-		newDate, err := time.Parse("2006-01-02", req.DueDate)
+		dueDate, err := time.Parse("2006-01-02 15:04:05", req.DueDate)
 
 		if err != nil {
 			c.IndentedJSON(http.StatusInternalServerError, gin.H{"status": 500, "err": err})
 			return
 		}
 
-		err = s.Create(req.Name, req.Description, req.UserID, newDate)
+		err = s.Create(req.Name, req.Description, req.UserID, dueDate)
 		if err != nil {
 			c.IndentedJSON(http.StatusInternalServerError, gin.H{"status": 500, "err": err})
 			return
@@ -79,14 +81,25 @@ func makeCreateTask(s Service) Controller {
 	}
 }
 
-func makeGetAllTask(s Service) Controller {
+func makeGetAllTaskById(s Service) Controller {
 	return func(c *gin.Context) {
 		userId := c.Param("id")
 		if userId == "" {
 			c.IndentedJSON(http.StatusBadRequest, gin.H{"status": 400, "message": "user_id is required"})
 			return
 		}
-		tasks, err := s.GetAllTask(userId)
+		tasks, err := s.GetAllTaskById(userId)
+		if err != nil {
+			c.IndentedJSON(http.StatusInternalServerError, gin.H{"status": 500, "err": err})
+			return
+		}
+		c.IndentedJSON(http.StatusOK, gin.H{"status": 200, "data": tasks})
+
+	}
+}
+func makeGetAllTask(s Service) Controller {
+	return func(c *gin.Context) {
+		tasks, err := s.GetAllTask()
 		if err != nil {
 			c.IndentedJSON(http.StatusInternalServerError, gin.H{"status": 500, "err": err})
 			return
@@ -103,14 +116,14 @@ func makeUpdateTask(s Service) Controller {
 			c.IndentedJSON(http.StatusBadRequest, gin.H{"status": 400, "message": "task_id is required"})
 			return
 		}
-		err := s.GetTaskById(taskId)
+		task, err := s.GetTaskById(taskId)
 		if err != nil {
 			c.IndentedJSON(http.StatusBadRequest, gin.H{"status": 400, "message": "user not found", "err": err})
 			return
 		}
 
 		var req UpDateReq
-		c.BindJSON(&req)
+		c.ShouldBind(&req)
 
 		if req.Name == "" {
 			c.IndentedJSON(http.StatusBadRequest, gin.H{"status": 400, "message": "name is required"})
@@ -124,10 +137,6 @@ func makeUpdateTask(s Service) Controller {
 			c.IndentedJSON(http.StatusBadRequest, gin.H{"status": 400, "message": "due_date is required"})
 			return
 		}
-		if req.Create == "" {
-			c.IndentedJSON(http.StatusBadRequest, gin.H{"status": 400, "message": "create_at is required"})
-			return
-		}
 		if req.UserID == "" {
 			c.IndentedJSON(http.StatusBadRequest, gin.H{"status": 400, "message": "user_id is required"})
 			return
@@ -137,10 +146,15 @@ func makeUpdateTask(s Service) Controller {
 			c.IndentedJSON(http.StatusBadRequest, gin.H{"status": 400, "message": "user not found", "err": err})
 			return
 		}
-		dueDate, err := time.Parse("2006-01-02", req.DueDate)
-		create, err := time.Parse("2006-01-02", req.Create)
+		dueDate, err := time.Parse("2006-01-02 15:04:05Z", req.DueDate)
+		if err != nil {
+			c.IndentedJSON(http.StatusInternalServerError, gin.H{"status": 500, "err": err})
+			fmt.Println(err)
+			return
+		}
+		req.Create = task.Create_at.Format("2006-01-02 15:04:05")
 
-		update, err := s.UpDateTask(taskId, req.Name, req.Description, req.UserID, dueDate, req.Status, create)
+		update, err := s.UpDateTask(taskId, req.Name, req.Description, req.UserID, dueDate, task.Create_at, req.Status)
 		if err != nil {
 			c.IndentedJSON(http.StatusInternalServerError, gin.H{"status": 500, "err": err})
 			return

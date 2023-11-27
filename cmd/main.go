@@ -26,15 +26,17 @@ func main() {
 	taskEnd := task.MakeEnponints(taskSrv)
 
 	gin.SetMode(gin.ReleaseMode)
-	router := gin.Default()
 
+	router := gin.Default()
+	router.Use(middleware.CORSMiddleware())
 	router.POST("/login", gin.HandlerFunc(userEnd.LoginUser))
 	router.POST("/register", gin.HandlerFunc(userEnd.RegisterUser))
 	router.GET("/users", middleware.ValidToken, gin.HandlerFunc(userEnd.GetAllUser))
 
 	router.POST("/create", middleware.ValidToken, gin.HandlerFunc(taskEnd.CreateTask))
-	router.GET("/tasks/:id", middleware.ValidToken, gin.HandlerFunc(taskEnd.GetAllTask))
-	router.PATCH("/update/:id", middleware.ValidToken, gin.HandlerFunc(taskEnd.UpDateTask))
+	router.GET("/tasks/:id", middleware.ValidToken, gin.HandlerFunc(taskEnd.GetAllTaskById))
+	router.GET("/tasks", middleware.ValidToken, gin.HandlerFunc(taskEnd.GetAllTask))
+	router.POST("/update/:id", middleware.ValidToken, gin.HandlerFunc(taskEnd.UpDateTask))
 
 	router.Run(":8080")
 }
