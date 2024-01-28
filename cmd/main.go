@@ -3,9 +3,9 @@ package main
 import (
 	"log"
 
-	con "github.com/Jhon-2801/task-manager/core/controllers"
-	repo "github.com/Jhon-2801/task-manager/core/repo"
-	"github.com/Jhon-2801/task-manager/core/service"
+	"github.com/Jhon-2801/task-manager/core/middleware"
+	"github.com/Jhon-2801/task-manager/core/task"
+	"github.com/Jhon-2801/task-manager/core/user"
 	"github.com/Jhon-2801/task-manager/db"
 	"github.com/gin-gonic/gin"
 )
@@ -17,14 +17,26 @@ func main() {
 		log.Fatalf(err.Error())
 	}
 
-	userRepo := repo.NewRepo(db)
-	userSrv := service.NewService(userRepo)
-	userEnd := con.MakeEnponints(userSrv)
+	userRepo := user.NewRepo(db)
+	userSrv := user.NewService(userRepo)
+	userEnd := user.MakeEnponints(userSrv)
+
+	taskRepo := task.NewRepo(db)
+	taskSrv := task.NewService(taskRepo)
+	taskEnd := task.MakeEnponints(taskSrv)
+
+	gin.SetMode(gin.ReleaseMode)
 
 	router := gin.Default()
-
-	router.POST("/login")
+	router.Use(middleware.CORSMiddleware())
+	router.POST("/login", gin.HandlerFunc(userEnd.LoginUser))
 	router.POST("/register", gin.HandlerFunc(userEnd.RegisterUser))
+	router.GET("/users", middleware.ValidToken, gin.HandlerFunc(userEnd.GetAllUser))
 
-	router.Run("localhost:8080")
+	router.POST("/create", middleware.ValidToken, gin.HandlerFunc(taskEnd.CreateTask))
+	router.GET("/tasks/:id", middleware.ValidToken, gin.HandlerFunc(taskEnd.GetAllTaskById))
+	router.GET("/tasks", middleware.ValidToken, gin.HandlerFunc(taskEnd.GetAllTask))
+	router.POST("/update/:id", middleware.ValidToken, gin.HandlerFunc(taskEnd.UpDateTask))
+
+	router.Run(":8080")
 }

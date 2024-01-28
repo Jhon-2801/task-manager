@@ -25,7 +25,6 @@ func ConnectionBD() (*gorm.DB, error) {
 		port,
 		name)
 
-	fmt.Println(dsn)
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 
 	if err != nil {
